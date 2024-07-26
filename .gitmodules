@@ -1,0 +1,3 @@
+[submodule "proto"]
+	path = src/proto
+	url = git@github.com:quikkom/auth-proto

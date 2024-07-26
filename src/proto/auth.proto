@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package auth;
+
+option go_package = "github.com/quikkom/auth/proto";
+
+service Auth {
+    rpc Login(LoginRequest) returns (LoginResponse) {};
+}
+
+message LoginResponse {
+    string token = 1;
+    string username = 2;
+}
+
+message LoginRequest {
+    optional string email = 1;
+    optional string username = 2;
+    string password = 3;
+}
