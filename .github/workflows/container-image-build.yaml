@@ -36,7 +36,7 @@ jobs:
         uses: actions/setup-go@v5.0.2
 
       - name: Install proto-gen-go
-        run: "go install github.com/golang/protobuf/protoc-gen-go@v1.28"
+        run: "go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.28"
 
       - name: Generate code from proto definitions
         run: |
