@@ -22,6 +22,17 @@ jobs:
         with:
           submodules: true
 
+      - name: Setup Protobuf
+        uses: wizhi/setup-buf@v1
+        with:
+          version: '0.36.0'
+      - name: Setup Proto compiler
+        uses: arduino/setup-protoc@v1
+        with:
+          version: '3.x'
+      - name: Generate code from proto definitions
+        run: |
+          make -C src/proto go
       - name: Log in to the Container registry
         uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
         with:
