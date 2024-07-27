@@ -25,6 +25,7 @@ jobs:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
           POSTGRES_DB: postgres
+        
     steps:
       - name: Checkout the repo
         uses: actions/checkout@v4
@@ -40,6 +41,12 @@ jobs:
           DATABASE_URL=postgres://postgres:postgres@localhost:5432/postgres?sslmode=disable
           AUTH_SECRET="auth_secret"
           EOF
+
+      - name: Migrate schema to test database
+        continue-on-error: false
+        shell: bash
+        run: PGPASSWORD=postgres psql -U postgres -h localhost < sql/00-init-schema.sql
+
       - name: Run tests
         working-directory: ./src
         run: dotenvx run -f ../.env -- go test -v

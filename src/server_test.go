@@ -59,8 +59,10 @@ func TestAuthService_Login(t *testing.T) {
 	assert.NoError(t, err)
 
 	t.Cleanup(func() {
-		db.DBConn.Exec(context.Background(), "DELETE FROM users WHERE username=$1", username)
-		db.DBConn.Close(context.Background())
+		if db.DBConn != nil {
+			db.DBConn.Exec(context.Background(), "DELETE FROM users WHERE username=$1", username)
+			db.DBConn.Close(context.Background())
+		}
 	})
 	t.Run("Login user", func(t *testing.T) {
 		res, err := client.Login(context.Background(), &proto.LoginRequest{
@@ -70,9 +72,11 @@ func TestAuthService_Login(t *testing.T) {
 
 		assert.NoError(t, err, "Unexpected error")
 		assert.NotNil(t, res, "Response is nil")
-		assert.Equal(t, username, res.Username, "Wrong user")
-		assert.NotEmpty(t, res.Token, "Empty token")
 
+		if res != nil {
+			assert.Equal(t, username, res.Username, "Wrong user")
+			assert.NotEmpty(t, res.Token, "Empty token")
+		}
 	})
 
 	t.Run("Wrong password", func(t *testing.T) {
