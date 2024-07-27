@@ -1,0 +1,51 @@
+name: Test
+run-name: Run tests
+on:
+  pull_request:
+    types:
+      - opened
+      - edited
+    branches:
+      - master
+      - dev
+    paths:
+      - '**.go'
+jobs:
+  tests:
+    name: Run tests
+    runs-on: ubuntu-latest
+    services:
+      postgresql:
+        image: postgres:16.3
+        ports:
+          - 5432:5432
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: postgres
+        
+    steps:
+      - name: Checkout the repo
+        uses: actions/checkout@v4
+        with:
+          submodules: true # Get proto repository too
+
+      - name: Setup environment
+        uses: ./.github/actions/setup-env
+
+      - name: Create .env file
+        run: |
+          cat << EOF > .env
+          DATABASE_URL=postgres://postgres:postgres@localhost:5432/postgres?sslmode=disable
+          AUTH_SECRET="auth_secret"
+          EOF
+
+      - name: Migrate schema to test database
+        continue-on-error: false
+        shell: bash
+        run: PGPASSWORD=postgres psql -U postgres -h localhost < sql/00-init-schema.sql
+
+      - name: Run tests
+        working-directory: ./src
+        run: dotenvx run -f ../.env -- go test -v
+        continue-on-error: false
