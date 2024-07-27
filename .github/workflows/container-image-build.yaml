@@ -1,5 +1,5 @@
 name: Container Image Build
-run-name: Build container image and push to GitHub Packages
+run-name: Container Image Build
 on:
   push:
     branches:
@@ -9,6 +9,7 @@ env:
   IMAGE_NAME: quikkom/auth
 jobs:
   build-and-push-image:
+    name: Build and push container image
     permissions:
       contents: read
       packages: write
@@ -41,7 +42,8 @@ jobs:
           EOF
       - name: Run tests
         working-directory: ./src
-        run: dotenvx -f ../.env -- go test -v
+        run: dotenvx run -f ../.env -- go test -v
+        continue-on-error: false
 
       - name: Read version number
         id: version
@@ -66,9 +68,9 @@ jobs:
           labels: |
             org.opencontainers.image.source=https://github.com/${{ github.repository }}
 
-      - name: Bump version
-        uses: remorses/bump-version@js
-        with:
-            version_file: ./VERSION
-        env:
-            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      # - name: Bump version
+      #   uses: remorses/bump-version@js
+      #   with:
+      #       version_file: ./VERSION
+      #   env:
+      #       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
