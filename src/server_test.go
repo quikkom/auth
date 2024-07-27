@@ -51,10 +51,15 @@ func TestAuthService_Login(t *testing.T) {
 	username := "test"
 	password := "a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3" // 123
 	email := "test@test.com"
-	db.DBConn.Exec(context.Background(), `
+	_, err = db.DBConn.Exec(context.Background(), `
 		INSERT INTO users (username, email, "password")
 			VALUES ($1, $2, $3); 
 	`, username, email, password)
+
+	if err != nil {
+		log.Panicf("Error when creating mock user: %s", err)
+	}
+
 	t.Cleanup(func() {
 		db.DBConn.Exec(context.Background(), "DELETE FROM users WHERE username=$1", username)
 		db.DBConn.Close(context.Background())
