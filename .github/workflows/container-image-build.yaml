@@ -14,6 +14,16 @@ jobs:
       packages: write
       
     runs-on: ubuntu-latest
+    services:
+      # Start a postgresql instance to run tests
+      postgresql:
+        image: postgres:16.3
+        ports:
+          - 5432:5432
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: postgres
     steps:
       - name: Checkout the repo
         uses: actions/checkout@v4
@@ -22,6 +32,16 @@ jobs:
 
       - name: Setup environment
         uses: ./.github/actions/setup-env
+
+      - name: Create .env file
+        run: |
+          cat << EOF > .env
+          DATABASE_URL=postgres://postgres:postgres@localhost:5432/postgres?sslmode=disable
+          AUTH_SECRET="auth_secret"
+          EOF
+      - name: Run tests
+        working-directory: ./src
+        run: dotenvx -f ../.env -- go test -v
 
       - name: Read version number
         id: version
@@ -45,3 +65,10 @@ jobs:
           tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME}}:${{ steps.version.outputs.content }}
           labels: |
             org.opencontainers.image.source=https://github.com/${{ github.repository }}
+
+      - name: Bump version
+        uses: remorses/bump-version@js
+        with:
+            version_file: ./VERSION
+        env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

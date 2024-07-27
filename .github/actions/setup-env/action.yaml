@@ -26,3 +26,11 @@ runs:
   - name: Generate code from proto definitions
     shell: bash
     run: make -C src/proto go
+
+  - uses: actions/setup-node@v3
+    with:
+      node-version: 16
+
+  - name: Install dotenvx
+    run: curl -sfS https://dotenvx.sh/install.sh | sh
+    shell: bash
