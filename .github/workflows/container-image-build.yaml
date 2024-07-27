@@ -4,16 +4,17 @@ on:
   push:
     branches:
       - master
+      - dev
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: quikkom/auth
 jobs:
   build-and-push-image:
-    name: Build and push container image
+    name: Build container image
     permissions:
       contents: read
       packages: write
-      
+
     runs-on: ubuntu-latest
     steps:
       - name: Checkout the repo
@@ -43,13 +44,13 @@ jobs:
         with:
           context: .
           push: true
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME}}:${{ steps.version.outputs.content }}
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME}}-${{ github.head_ref }}:${{ steps.version.outputs.content }}
           labels: |
             org.opencontainers.image.source=https://github.com/${{ github.repository }}
 
-      # - name: Bump version
-      #   uses: remorses/bump-version@js
-      #   with:
-      #       version_file: ./VERSION
-      #   env:
-      #       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Bump version
+        uses: remorses/bump-version@js
+        with:
+          version_file: ./VERSION
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
