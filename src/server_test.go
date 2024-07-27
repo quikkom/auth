@@ -56,9 +56,7 @@ func TestAuthService_Login(t *testing.T) {
 			VALUES ($1, $2, $3); 
 	`, username, email, password)
 
-	if err != nil {
-		log.Panicf("Error when creating mock user: %s", err)
-	}
+	assert.NoError(t, err)
 
 	t.Cleanup(func() {
 		db.DBConn.Exec(context.Background(), "DELETE FROM users WHERE username=$1", username)
