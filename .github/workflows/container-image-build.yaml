@@ -63,3 +63,5 @@ jobs:
           context: .
           push: true
           tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME}}:${{ steps.version.outputs.content }}
+          labels: |
+            org.opencontainers.image.source=https://github.com/${{ github.repository }}
