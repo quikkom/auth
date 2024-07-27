@@ -1,3 +1,4 @@
+name: Container Image Build
 run-name: Build container image and push to GitHub Packages
 on:
   push:
@@ -14,8 +15,13 @@ jobs:
       
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: ./.github/actions/checkout
+      - name: Checkout the repo
+        uses: actions/checkout@v4
+        with:
+          submodules: true # Get proto repository too
+
+      - name: Setup environment
+        uses: ./.github/actions/setup-env
 
       - name: Read version number
         id: version

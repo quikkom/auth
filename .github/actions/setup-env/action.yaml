@@ -1,14 +1,9 @@
-name: Checkout
-description: Checkout the code and setup the environment
+name: Setup Environment
+description: Setups the environment like installing golang and protoc
 
 runs:
   using: "composite"
   steps:
-  - name: Checkout the repo
-    uses: actions/checkout@v4
-    with:
-      submodules: true # Get proto repository too
-
   - name: Setup Protobuf
     uses: wizhi/setup-buf@v1
     with:
