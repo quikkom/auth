@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - master
-      - dev
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: quikkom/auth
@@ -44,7 +43,7 @@ jobs:
         with:
           context: .
           push: true
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME}}-${{ github.head_ref }}:${{ steps.version.outputs.content }}
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME}}:${{ steps.version.outputs.content }}
           labels: |
             org.opencontainers.image.source=https://github.com/${{ github.repository }}
 
