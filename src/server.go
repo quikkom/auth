@@ -57,6 +57,7 @@ func (a *AuthServer) Login(ctx context.Context, req *proto.LoginRequest) (*proto
 
 	username := ""
 	password := ""
+
 	row := db.DBConn.QueryRow(context.Background(),
 		fmt.Sprintf("SELECT username, password FROM users WHERE %s=$1", identifier),
 		identifierValue)
